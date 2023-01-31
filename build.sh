@@ -45,6 +45,7 @@ function build_firmware(){
     else
         make -j$(expr $(nproc) + 1)  V=s
     fi
+    return
 }
 
 function copy_file(){
@@ -55,6 +56,7 @@ function copy_file(){
     rm -rf packages
     cp -rf ./* ~/firmware
     cp -rf ~/openwrt/bin/packages/* ~/packages
+    return
 }
 
 case $profile in 
@@ -74,8 +76,7 @@ case $profile in
         else
             ./scripts/gen_config.py $profile openwrt_common glinet_nas luci custom
         fi
-        build_firmware $ui ipq60xx
-        copy_file ~/openwrt/bin/targets/*/*
+        build_firmware $ui ipq60xx && copy_file ~/openwrt/bin/targets/*/*
     ;;
     target_ipq40xx_gl-a1300)
         python3 setup.py -c configs/config-21.02.2.yml
@@ -86,8 +87,7 @@ case $profile in
         else
             ./scripts/gen_config.py $profile openwrt_common glinet_nas luci  custom
         fi
-        build_firmware $ui ipq40xx
-        copy_file ~/openwrt/bin/targets/*/*
+        build_firmware $ui ipq40xx && copy_file ~/openwrt/bin/targets/*/*
     ;;
     target_mt7981_gl-mt2500|\
     target_mediatek_gl-mt3000)
@@ -104,23 +104,20 @@ case $profile in
         else
             ./scripts/gen_config.py $profile glinet_nas custom
         fi
-        build_firmware $ui mt7981
-        copy_file ~/openwrt/bin/targets/*/*
+        build_firmware $ui mt7981 && copy_file ~/openwrt/bin/targets/*/*
     ;;
     target_siflower_gl-sf1200|\
     target_siflower_gl-sft1200)
         python3 setup.py -c configs/config-siflower-18.x.yml
         ln -s $base/gl-infra-builder/openwrt-18.06/siflower/openwrt-18.06 ~/openwrt && cd ~/openwrt
         ./scripts/gen_config.py $profile glinet_nas custom
-        build_firmware
-        copy_file ~/openwrt/bin/targets/*
+        build_firmware && copy_file ~/openwrt/bin/targets/*
     ;;
     target_ramips_gl-mt1300)
         python3 setup.py -c configs/config-22.03.0.yml
         ln -s $base/gl-infra-builder/openwrt-22.03/openwrt-22.03.0 ~/openwrt && cd ~/openwrt
         ./scripts/gen_config.py $profile glinet_nas luci custom
-        build_firmware
-        copy_file ~/openwrt/bin/targets/*/*
+        build_firmware && copy_file ~/openwrt/bin/targets/*/*
     ;;
 esac
 
